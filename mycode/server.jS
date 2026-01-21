@@ -1,40 +1,49 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
-app.use(express.json());                 // parse JSON bodies
-app.use(express.static(__dirname)); // serve index.html and other files from this folder
+app.use(express.json());
+app.use(express.static(__dirname));
 
-// simple in-memory users tore
-let users = [
-  { id: 1, name: 'Alice' },
-  { id: 2, name: 'Bob' }
-];
-let nextId = 3;
+/* 🔹 1. MongoDB connection */
+mongoose.connect('mongodb://localhost:27017/userdb')
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error(err));
 
-// GET /users
-app.get('/users', (req, res) => {
+/* 🔹 2. USER MODEL (PUT IT HERE 👇) */
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  }
+});
+
+const User = mongoose.model('User', UserSchema);
+
+/* 🔹 3. API ROUTES */
+app.get('/users', async (req, res) => {
+  const users = await User.find();
   res.json(users);
 });
 
-// POST /users
-app.post('/users', (req, res) => {
+app.post('/users', async (req, res) => {
   const { name } = req.body;
-  if (!name || !name.trim()) return res.status(400).json({ error: 'Name required' });
-  const user = { id: nextId++, name: name.trim() };
-  users.push(user);
+  if (!name) return res.status(400).json({ error: 'Name required' });
+
+  const user = await User.create({ name });
   res.status(201).json(user);
 });
 
-// DELETE /users/:id
-app.delete('/users/:id', (req, res) => {
-  const id = Number(req.params.id);
-  users = users.filter(u => u.id !== id);
+app.delete('/users/:id', async (req, res) => {
+  await User.findByIdAndDelete(req.params.id);
   res.status(204).end();
 });
 
+/* 🔹 4. START SERVER */
 app.listen(PORT, () => {
-  console.log(`Server listening: http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });

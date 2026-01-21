@@ -1,0 +1,23 @@
+{
+  "name": "full-stack-development-in-codveda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/222618698/Full-Stack-Development-in-codveda.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/222618698/Full-Stack-Development-in-codveda/issues"
+  },
+  "homepage": "https://github.com/222618698/Full-Stack-Development-in-codveda#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
